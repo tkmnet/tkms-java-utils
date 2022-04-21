@@ -5,7 +5,7 @@
 ```
 repositories {
     maven {
-      url "https://tkmnet.github.io/"
+      url "https://tkmnet.github.io/tkms-java-utils"
     }
 }
 
