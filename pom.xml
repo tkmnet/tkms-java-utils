@@ -1,7 +1,0 @@
-<distributionManagement>
-  <repository>
-    <id>github</id>
-    <name>tkms-java-utils</name>
-    <url>https://maven.pkg.github.com/tkmnet/tkms-java-utils</url>
-  </repository>
-</distributionManagement>
