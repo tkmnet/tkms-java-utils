@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'tkms-java-utils'
-include('lib')
+include('tkms-java-utils')

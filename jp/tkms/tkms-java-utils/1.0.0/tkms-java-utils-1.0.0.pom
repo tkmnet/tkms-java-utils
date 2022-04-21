@@ -8,20 +8,6 @@
   <!-- do_not_remove: published-with-gradle-metadata -->
   <modelVersion>4.0.0</modelVersion>
   <groupId>jp.tkms</groupId>
-  <artifactId>lib</artifactId>
+  <artifactId>tkms-java-utils</artifactId>
   <version>1.0.0</version>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math3</artifactId>
-      <version>3.6.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>30.1.1-jre</version>
-      <scope>runtime</scope>
-    </dependency>
-  </dependencies>
 </project>
