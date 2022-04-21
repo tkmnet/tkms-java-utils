@@ -1,4 +1,4 @@
-package jp.tkms.util;
+package jp.tkms.utils.parallel;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -7,20 +7,24 @@ import java.util.function.Consumer;
 
 public class ParallelProcess {
   private ExecutorService executorService;
-  ArrayList<Future> futureList;
+  private ArrayList<Future> list;
 
   public ParallelProcess(ExecutorService executorService) {
     this.executorService = executorService;
-    this.futureList = new ArrayList<>();
+    this.list = new ArrayList<>();
+  }
+
+  public ParallelProcess() {
+    this(StaticExecutorService.get());
   }
 
   public void submit(Runnable runnable) {
-    futureList.add(executorService.submit(runnable));
+    list.add(executorService.submit(runnable));
   }
 
   public void waitFor() throws Exception {
     Exception lastException = null;
-    for (Future future : futureList) {
+    for (Future future : list) {
       try {
         future.get();
       } catch (Exception e) {
@@ -36,5 +40,9 @@ public class ParallelProcess {
     ParallelProcess process = new ParallelProcess(executorService);
     consumer.accept(process);
     process.waitFor();
+  }
+
+  public static void submitAndWait(Consumer<ParallelProcess> consumer) throws Exception {
+    submitAndWait(StaticExecutorService.get(), consumer);
   }
 }

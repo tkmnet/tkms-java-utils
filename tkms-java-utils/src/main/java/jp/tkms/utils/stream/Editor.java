@@ -1,4 +1,4 @@
-package jp.tkms.util;
+package jp.tkms.utils.stream;
 
 import java.util.function.Function;
 

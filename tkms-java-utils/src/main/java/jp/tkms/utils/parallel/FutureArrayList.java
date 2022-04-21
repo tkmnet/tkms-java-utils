@@ -1,35 +1,21 @@
-package jp.tkms.util;
+package jp.tkms.utils.parallel;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class FutureArrayList<E> implements List<E> {
-  private static final Object objectLocker = new Object();
-  private static ExecutorService staticExecutorService = null;
-
-  private transient int modCount = 0;
   private ExecutorService executorService;
+  private transient int modCount = 0;
   private ArrayList<Future<E>> list;
-
-  public FutureArrayList() {
-    executorService = initializeExecutorService();
-    list = new ArrayList<>();
-  }
 
   public FutureArrayList(ExecutorService executorService) {
     this.executorService = executorService;
     list = new ArrayList<>();
   }
 
-  private static ExecutorService initializeExecutorService() {
-    synchronized (objectLocker) {
-      if (staticExecutorService == null) {
-        staticExecutorService = Executors.newWorkStealingPool();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> staticExecutorService.shutdown()));
-      }
-      return staticExecutorService;
-    }
+  public FutureArrayList() {
+    this(StaticExecutorService.get());
   }
 
   @Override

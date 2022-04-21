@@ -1,4 +1,4 @@
-package jp.tkms.util;
+package jp.tkms.utils.value;
 
 public class Values {
   public static Object convertString(String s) {
