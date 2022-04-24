@@ -14,8 +14,16 @@ public class FutureArrayList<E> implements List<E> {
     list = new ArrayList<>();
   }
 
+  public FutureArrayList(int parallelism) {
+    this(Executors.newWorkStealingPool(parallelism));
+  }
+
   public FutureArrayList() {
     this(StaticExecutorService.get());
+  }
+
+  public void shutdown() {
+    executorService.shutdown();
   }
 
   @Override

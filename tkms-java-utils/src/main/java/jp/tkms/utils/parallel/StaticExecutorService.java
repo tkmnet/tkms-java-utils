@@ -10,7 +10,7 @@ public class StaticExecutorService {
 
     public static ExecutorService get() {
         synchronized (executorService) {
-            if (executorService.get() == null) {
+            if (executorService.get() == null || (executorService.get() != null && executorService.get().isShutdown())) {
                 executorService.set(Executors.newWorkStealingPool());
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> executorService.get().shutdown()));
             }

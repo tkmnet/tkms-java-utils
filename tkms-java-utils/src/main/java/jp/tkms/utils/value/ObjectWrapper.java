@@ -22,7 +22,14 @@ public class ObjectWrapper<T> extends Object {
   }
 
   public T get(Callable<T> defaultValue) throws Exception {
-    return value != null ? value : defaultValue.call();
+    if (value == null) {
+      synchronized (this) {
+        if (value == null) {
+          value = defaultValue.call();
+        }
+      }
+    }
+    return value;
   }
 
   public T get(T defaultValue) throws Exception {
