@@ -19,8 +19,17 @@ public class FutureArrayListTest {
    */
 
   @Test void success() {
+    test(new FutureArrayList<>(Executors.newWorkStealingPool()));
+    test(new FutureArrayList<>());
+    StaticExecutorService.get().shutdown();
+    test(new FutureArrayList<>());
+    FutureArrayList<Integer> list = new FutureArrayList<>(2);
+    test(list);
+    test(list);
+  }
+
+  void test(FutureArrayList<Integer> object) {
     ExecutorService executorService = Executors.newWorkStealingPool();
-    FutureArrayList<Integer> object = new FutureArrayList<>();
     assertEquals(object.size(), 0);
     Integer[] array = new Integer[]{123, 456, 789};
     object.add(array[0]);
