@@ -1,6 +1,5 @@
-package jp.tkms.utils.parallel;
+package jp.tkms.utils.concurrent;
 
-import jp.tkms.utils.parallel.FutureArrayList;
 import org.junit.jupiter.api.*;
 
 import java.util.concurrent.ExecutorService;

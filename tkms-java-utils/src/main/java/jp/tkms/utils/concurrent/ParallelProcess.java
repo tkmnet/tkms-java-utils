@@ -1,4 +1,4 @@
-package jp.tkms.utils.parallel;
+package jp.tkms.utils.concurrent;
 
 import jp.tkms.utils.value.ObjectWrapper;
 
