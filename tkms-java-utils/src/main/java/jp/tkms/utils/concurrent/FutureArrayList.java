@@ -70,15 +70,19 @@ public class FutureArrayList<E> implements List<E> {
 
   @Override
   public boolean add(E e) {
-    return list.add(executorService.submit(() -> e));
+    return add(executorService.submit(() -> e));
   }
 
   public boolean add(Callable<E> c) {
-    return list.add(executorService.submit(c));
+    synchronized (list) {
+      return list.add(executorService.submit(c));
+    }
   }
 
   public boolean add(Future<E> f) {
-    return list.add(f);
+    synchronized (list) {
+      return list.add(f);
+    }
   }
 
   @Override
@@ -166,13 +170,17 @@ public class FutureArrayList<E> implements List<E> {
 
   @Override
   public E set(int i, E e) {
-    list.set(i, executorService.submit(() -> e));
-    return e;
+    synchronized (list) {
+      list.set(i, executorService.submit(() -> e));
+      return e;
+    }
   }
 
   @Override
   public void add(int i, E e) {
-    list.add(i, executorService.submit(() -> e));
+    synchronized (list) {
+      list.add(i, executorService.submit(() -> e));
+    }
   }
 
   @Override

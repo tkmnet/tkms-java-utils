@@ -38,7 +38,9 @@ public class ParallelProcess {
   }
 
   public void submit(Runnable runnable) {
-    list.add(getExecutorService().submit(runnable));
+    synchronized (list) {
+      list.add(getExecutorService().submit(runnable));
+    }
   }
 
   public void waitFor() throws Exception {
