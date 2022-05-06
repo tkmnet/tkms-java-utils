@@ -22,6 +22,8 @@ public class InitTest {
       int i = 5 + 1;
       return i;
     }));
+
+    assertEquals((5 +1), new Init<Integer>().call(()-> { return 5; }, (o) -> { return o +1; }));
   }
 
   /*
