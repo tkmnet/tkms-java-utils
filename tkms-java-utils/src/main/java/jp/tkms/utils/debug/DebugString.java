@@ -8,7 +8,43 @@ public class DebugString {
         return o.toString();
     }
 
-    public static String toString(List list) {
-        return Arrays.toString(list.stream().map(o -> DebugString.toString(o)).toArray());
+    public static String toString(List l) {
+        return Arrays.toString(l.stream().map(o -> DebugString.toString(o)).toArray());
+    }
+
+    public static String toString(int[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(byte[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(long[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(char[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(float[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(short[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(double[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(boolean[] a) {
+        return Arrays.toString(a);
+    }
+
+    public static String toString(Object[] a) {
+        return Arrays.toString(a);
     }
 }
