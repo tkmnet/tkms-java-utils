@@ -1,6 +1,9 @@
 package jp.tkms.utils.value;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InitTest {
@@ -19,7 +22,19 @@ public class InitTest {
       return i;
     }));
 
-    assertEquals((5 +1), new Init<Integer>().call(new Integer(5), (o) -> { return o +1; }));
+    assertEquals((5 +2), new Init<AtomicInteger>().call(
+            new AtomicInteger(5),
+            (o) -> {
+              o.addAndGet(2);
+            }).get()
+    );
+
+    assertEquals((5), new Init<Integer>().call(
+              new Integer(5),
+              (o) -> {
+                  o += 3;
+              })
+    );
   }
 
   /*
