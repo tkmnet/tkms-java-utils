@@ -1,7 +1,6 @@
 package jp.tkms.utils.value;
 
 import jp.tkms.utils.stream.Editor;
-
 import java.util.concurrent.Callable;
 
 public class Init<T> {
@@ -15,9 +14,9 @@ public class Init<T> {
         }
     }
 
-    public T call(Callable<T> callable, Editor<T> editor) {
+    public T call(T v, Editor<T> editor) {
         try {
-            return editor.apply(callable.call());
+            return editor.apply(v);
         } catch (Exception e) {
             return null;
         }
