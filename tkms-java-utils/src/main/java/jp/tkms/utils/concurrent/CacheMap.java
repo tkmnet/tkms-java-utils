@@ -38,6 +38,13 @@ public class CacheMap<K, V> implements Map<K, V> {
     }
   }
 
+  public void load(K key) {
+    InitializableReference<V> reference = map.get(key);
+    if (reference != null) {
+      reference.load();
+    }
+  }
+
   public void pin(K key) {
     InitializableReference<V> reference = map.get(key);
     if (reference != null) {
@@ -195,9 +202,10 @@ public class CacheMap<K, V> implements Map<K, V> {
     public InitializableReference(Callable<V> initializer) {
       this.initializer = initializer;
       release();
+      load();
     }
 
-    public V get() throws ExecutionException, InterruptedException {
+    public Future<V> load() {
       Future<V> value = reference.get();
       if (pinnedFuture != null) {
         value = pinnedFuture;
@@ -206,7 +214,11 @@ public class CacheMap<K, V> implements Map<K, V> {
         value = executorService.submit(initializer);
         reference = new WeakReference<>(value);
       }
-      return value.get();
+      return value;
+    }
+
+    public V get() throws ExecutionException, InterruptedException {
+      return load().get();
     }
 
     public void release() {
@@ -215,12 +227,7 @@ public class CacheMap<K, V> implements Map<K, V> {
     }
 
     public void pin() {
-      Future<V> value = reference.get();
-      if (value == null) {
-        value = executorService.submit(initializer);
-        reference = new WeakReference<>(value);
-      }
-      pinnedFuture = value;
+      pinnedFuture = load();
     }
 
     public void unpin() {
