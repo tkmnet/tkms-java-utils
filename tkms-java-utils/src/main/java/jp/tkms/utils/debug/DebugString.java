@@ -5,7 +5,7 @@ import java.util.List;
 
 public class DebugString {
     public static String toString(Object o) {
-        return o.toString();
+        return o == null ? "null" : o.toString();
     }
 
     public static String toString(List l) {
