@@ -1,0 +1,60 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "jp.tkms",
+    "module": "tkms-java-utils",
+    "version": "1.0.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.4.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "tkms-java-utils-1.0.1.jar",
+          "url": "tkms-java-utils-1.0.1.jar",
+          "size": 27704,
+          "sha512": "b4cf6b29d43c23dcd3095006add89922bdf06048b9ab1addbbc0295451287d0053b2f37eec8ddc5702e63b923d062b0115c3c47f4d8a7083379f269489083ec3",
+          "sha256": "2958469b4d70876b229093a13438a8066c27fc0abbb781b467ab589b246a1d11",
+          "sha1": "dbb7514e0024937866b1561e8ccffb05a80b1505",
+          "md5": "9a730d80d7f237ecb25db47c12f59d90"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "tkms-java-utils-1.0.1.jar",
+          "url": "tkms-java-utils-1.0.1.jar",
+          "size": 27704,
+          "sha512": "b4cf6b29d43c23dcd3095006add89922bdf06048b9ab1addbbc0295451287d0053b2f37eec8ddc5702e63b923d062b0115c3c47f4d8a7083379f269489083ec3",
+          "sha256": "2958469b4d70876b229093a13438a8066c27fc0abbb781b467ab589b246a1d11",
+          "sha1": "dbb7514e0024937866b1561e8ccffb05a80b1505",
+          "md5": "9a730d80d7f237ecb25db47c12f59d90"
+        }
+      ]
+    }
+  ]
+}
