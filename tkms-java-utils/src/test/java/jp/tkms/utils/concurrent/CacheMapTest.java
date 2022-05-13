@@ -1,9 +1,11 @@
 package jp.tkms.utils.concurrent;
 
+import jp.tkms.utils.debug.DebugElapsedTime;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,8 +20,16 @@ public class CacheMapTest {
    */
 
   @Test void success() {
+    DebugElapsedTime t = new DebugElapsedTime();
     CacheMap<Integer, String> map = new CacheMap<>();
+    map.put(1, () -> {
+      TimeUnit.SECONDS.sleep(1);
+      return "OK";
+    });
     map.pin(1);
+    assertEquals(true, t.next() < 100);
+    assertEquals("OK", map.get(1));
+    assertEquals(true, t.next() > 1000);
   }
 
   /*
