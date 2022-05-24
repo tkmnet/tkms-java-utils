@@ -20,8 +20,6 @@ public class FutureArrayListTest {
   @Test void success() {
     test(new FutureArrayList<>(Executors.newWorkStealingPool()));
     test(new FutureArrayList<>());
-    StaticExecutorService.get().shutdown();
-    test(new FutureArrayList<>());
     FutureArrayList<Integer> list = new FutureArrayList<>(2);
     test(list);
     test(list);

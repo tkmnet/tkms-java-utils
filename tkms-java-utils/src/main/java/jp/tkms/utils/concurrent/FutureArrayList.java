@@ -19,11 +19,7 @@ public class FutureArrayList<E> implements List<E> {
   }
 
   public FutureArrayList() {
-    this(StaticExecutorService.get());
-  }
-
-  public void shutdown() {
-    executorService.shutdown();
+    this(ForkJoinPool.commonPool());
   }
 
   @Override

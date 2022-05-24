@@ -1,13 +1,8 @@
 package jp.tkms.utils.value;
 
-import jp.tkms.utils.concurrent.FutureArrayList;
-import jp.tkms.utils.concurrent.StaticExecutorService;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 

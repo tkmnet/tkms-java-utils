@@ -18,11 +18,7 @@ public class CacheMap<K, V> implements Map<K, V> {
   }
 
   public CacheMap() {
-    this(StaticExecutorService.get());
-  }
-
-  public void shutdown() {
-    executorService.shutdown();
+    this(ForkJoinPool.commonPool());
   }
 
   public void release(K key) {

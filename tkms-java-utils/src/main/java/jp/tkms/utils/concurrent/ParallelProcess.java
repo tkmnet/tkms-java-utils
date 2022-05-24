@@ -5,6 +5,7 @@ import jp.tkms.utils.value.ObjectWrapper;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
@@ -24,7 +25,7 @@ public class ParallelProcess {
   }
 
   public ParallelProcess() {
-    this(StaticExecutorService.get());
+    this(ForkJoinPool.commonPool());
   }
 
   private ExecutorService getExecutorService() {
@@ -69,6 +70,6 @@ public class ParallelProcess {
   }
 
   public static void submitAndWait(Consumer<ParallelProcess> consumer) throws Exception {
-    submitAndWait(StaticExecutorService.get(), consumer);
+    submitAndWait(ForkJoinPool.commonPool(), consumer);
   }
 }
