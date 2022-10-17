@@ -29,7 +29,7 @@ public class CacheMapTest {
     map.pin(1);
     assertEquals(true, t.next() < 100);
     assertEquals("OK", map.get(1));
-    assertEquals(true, t.next() > 1000);
+    assertEquals(true, t.next() >= 1000);
   }
 
   /*
