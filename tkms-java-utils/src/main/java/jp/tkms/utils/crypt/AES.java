@@ -1,32 +1,20 @@
 package jp.tkms.utils.crypt;
 
-import javax.crypto.BadPaddingException;
+import jp.tkms.utils.string.HashString;
+
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class AES {
     private static final IvParameterSpec IV_PARAMETER_SPEC = new IvParameterSpec("FF23456789ABCD00".getBytes());
-    public static byte[] toSHA256(String text) {
-        MessageDigest messageDigest = null;
-        try {
-            messageDigest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        messageDigest.update(text.getBytes());
-        return messageDigest.digest();
-    }
+
     public static byte[] encrypt(String key, byte[] data) throws EncryptingException {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(toSHA256(key), "AES"), IV_PARAMETER_SPEC);
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(HashString.toSHA256(key), "AES"), IV_PARAMETER_SPEC);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -53,7 +41,7 @@ public class AES {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(toSHA256(key),  "AES"), IV_PARAMETER_SPEC);
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(HashString.toSHA256(key),  "AES"), IV_PARAMETER_SPEC);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
