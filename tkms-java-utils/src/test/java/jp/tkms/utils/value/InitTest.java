@@ -23,17 +23,17 @@ public class InitTest {
     }));
 
     assertEquals((5 +2), new Init<AtomicInteger>().call(
-            new AtomicInteger(5),
-            (o) -> {
-              o.addAndGet(2);
-            }).get()
+      new AtomicInteger(5),
+      (o) -> {
+        o.addAndGet(2);
+      }).get()
     );
 
     assertEquals((5), new Init<Integer>().call(
-              new Integer(5),
-              (o) -> {
-                  o += 3;
-              })
+      new Integer(5),
+      (o) -> {
+        o += 3;
+      })
     );
   }
 
