@@ -15,4 +15,12 @@ public class Simple {
       timeUnit.sleep(duration);
     }
   }
+
+  public static void sleep(TimeUnit timeUnit, long time) {
+    try {
+      timeUnit.sleep(time);
+    } catch (InterruptedException e) {
+      //NOP
+    }
+  }
 }
