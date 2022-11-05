@@ -3,9 +3,15 @@ package jp.tkms.utils.debug;
 public class DebugElapsedTime {
   long prevCheckPoint;
   long checkPoint;
+  String globalPrefix;
 
   public DebugElapsedTime() {
+    this("");
+  }
+
+  public DebugElapsedTime(String prefix) {
     checkPoint = System.currentTimeMillis();
+    globalPrefix = prefix;
   }
 
   public long next() {
@@ -15,18 +21,18 @@ public class DebugElapsedTime {
   }
 
   public void print(String prefix) {
-    System.out.println(prefix + next());
+    System.out.println(globalPrefix + prefix + next());
   }
 
   public void printToError(String prefix) {
-    System.err.println(prefix + next());
+    System.err.println(globalPrefix + prefix + next());
   }
 
   public void print() {
-    System.out.println(next());
+    System.out.println(globalPrefix + next());
   }
 
   public void printToError() {
-    System.err.println(next());
+    System.err.println(globalPrefix + next());
   }
 }
