@@ -21,10 +21,14 @@ public class LockByKeyTest {
         final Integer[] count = {0};
         IntStream.range(0, 100000).parallel().forEach((n) -> {
             try (LockByKey lock = LockByKey.acquire("")) {
-                count[0] += 1;
+                IntStream.range(0, 2).forEach((n2) -> {
+                    try (LockByKey lock2 = LockByKey.acquire("")) {
+                        count[0] += 1;
+                    }
+                });
             }
         });
-        assertEquals(count[0], 100000);
+        assertEquals(count[0], 100000 * 2);
     }
 
   /*
