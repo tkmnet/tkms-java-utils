@@ -1,5 +1,6 @@
 package jp.tkms.utils.concurrent;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -37,6 +38,26 @@ public class LockByKey implements AutoCloseable {
             lock.unlock();
             if (lock.isNonReserved()) {
                 localMap.remove(key);
+            }
+        }
+    }
+
+    public static boolean trySyncAll () {
+        for (SafeConcurrentHashMap<String, ReservableLock> localMap : map.values()) {
+            synchronized (localMap) {
+                if (!localMap.isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public static void syncAll () {
+        while (!trySyncAll()) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                //NOP
             }
         }
     }
