@@ -17,8 +17,16 @@ public class IntRange implements Iterable<Integer> {
         return new IntRange(startInclusive, endExclusive -1);
     }
 
+    public static IntRange range(int endExclusive) {
+        return range(0, endExclusive);
+    }
+
     public static IntRange rangeClosed(int startInclusive, int endInclusive) {
         return new IntRange(startInclusive, endInclusive);
+    }
+
+    public static IntRange rangeClosed(int endInclusive) {
+        return rangeClosed(0, endInclusive);
     }
 
     @Override
