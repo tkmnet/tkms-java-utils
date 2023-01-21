@@ -32,7 +32,7 @@ public class SafeConcurrentHashMap<K, V> extends ConcurrentHashMap<K, V> {
                 value = get(key);
                 if (value == null) {
                     value = defaults.call();
-                    put((K)key, value);
+                    put((K) key, value);
                 }
             }
         }

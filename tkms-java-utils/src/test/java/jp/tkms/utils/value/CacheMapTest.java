@@ -16,33 +16,34 @@ public class CacheMapTest {
   }``
    */
 
-  @Test void success() {
-    int list[] = {2, 4, 62, 9, 6};
-    CacheMap<Integer, Integer> map = new CacheMap<>();
-    for (int n : list) {
-      map.put(n, n +5);
+    @Test
+    void success() {
+        int list[] = {2, 4, 62, 9, 6};
+        CacheMap<Integer, Integer> map = new CacheMap<>();
+        for (int n : list) {
+            map.put(n, n + 5);
+        }
+        for (int n : list) {
+            assertEquals(map.get(n), n + 5);
+        }
+        map.clear();
+        assertEquals(0, map.size());
+        for (int n : list) {
+            map.put(n, () -> {
+                return n * n;
+            });
+        }
+        for (int n : list) {
+            assertEquals(map.get(n), n * n);
+        }
+        map.release();
+        for (Integer n : map.values()) {
+            assertNull(n);
+        }
+        for (int n : list) {
+            assertEquals(map.get(n), n * n);
+        }
     }
-    for (int n : list) {
-      assertEquals(map.get(n), n +5);
-    }
-    map.clear();
-    assertEquals(0, map.size());
-    for (int n : list) {
-      map.put(n, () -> {
-        return n * n;
-      });
-    }
-    for (int n : list) {
-      assertEquals(map.get(n), n * n);
-    }
-    map.release();
-    for (Integer n : map.values()) {
-      assertNull(n);
-    }
-    for (int n : list) {
-      assertEquals(map.get(n), n * n);
-    }
-  }
 
   /*
   @Test void fail() {

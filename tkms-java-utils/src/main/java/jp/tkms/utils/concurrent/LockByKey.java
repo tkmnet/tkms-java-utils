@@ -18,7 +18,9 @@ public class LockByKey implements AutoCloseable {
     public LockByKey(String key) {
         this.key = key;
         try {
-            localMap = map.get(key.hashCode() % BASEMAP_SIZE, () -> { return new SafeConcurrentHashMap<>(); });
+            localMap = map.get(key.hashCode() % BASEMAP_SIZE, () -> {
+                return new SafeConcurrentHashMap<>();
+            });
             synchronized (localMap) {
                 lock = localMap.get(key, () -> new ReservableLock());
                 lock.reserve();

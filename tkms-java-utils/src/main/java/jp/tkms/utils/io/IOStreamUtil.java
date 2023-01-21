@@ -8,7 +8,7 @@ public class IOStreamUtil {
         long size = 0;
         int n;
         if (inputStream != null) {
-            while(-1 != (n = inputStream.read(buffer))) {
+            while (-1 != (n = inputStream.read(buffer))) {
                 outputStream.write(buffer, 0, n);
                 size += n;
             }

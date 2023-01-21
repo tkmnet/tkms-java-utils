@@ -16,26 +16,27 @@ public class InitTest {
   }``
    */
 
-  @Test void success() {
-    assertEquals((5 +1), new Init<Integer>().call(()-> {
-      int i = 5 + 1;
-      return i;
-    }));
+    @Test
+    void success() {
+        assertEquals((5 + 1), new Init<Integer>().call(() -> {
+            int i = 5 + 1;
+            return i;
+        }));
 
-    assertEquals((5 +2), new Init<AtomicInteger>().call(
-            new AtomicInteger(5),
-            (o) -> {
-              o.addAndGet(2);
-            }).get()
-    );
+        assertEquals((5 + 2), new Init<AtomicInteger>().call(
+                new AtomicInteger(5),
+                (o) -> {
+                    o.addAndGet(2);
+                }).get()
+        );
 
-    assertEquals((5), new Init<Integer>().call(
-              new Integer(5),
-              (o) -> {
-                  o += 3;
-              })
-    );
-  }
+        assertEquals((5), new Init<Integer>().call(
+                new Integer(5),
+                (o) -> {
+                    o += 3;
+                })
+        );
+    }
 
   /*
   @Test void fail() {

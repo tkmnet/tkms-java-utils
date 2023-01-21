@@ -14,7 +14,7 @@ public class IntRange implements Iterable<Integer> {
 
     public static IntRange range(int startInclusive, int endExclusive) {
         if (startInclusive == endExclusive) endExclusive += 1;
-        return new IntRange(startInclusive, endExclusive -1);
+        return new IntRange(startInclusive, endExclusive - 1);
     }
 
     public static IntRange range(int endExclusive) {

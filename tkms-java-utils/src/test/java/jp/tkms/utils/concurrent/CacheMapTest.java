@@ -19,18 +19,19 @@ public class CacheMapTest {
   }``
    */
 
-  @Test void success() {
-    DebugElapsedTime t = new DebugElapsedTime();
-    CacheMap<Integer, String> map = new CacheMap<>();
-    map.put(1, () -> {
-      TimeUnit.SECONDS.sleep(1);
-      return "OK";
-    });
-    map.pin(1);
-    assertEquals(true, t.next() < 100);
-    assertEquals("OK", map.get(1));
-    assertEquals(true, t.next() >= 1000);
-  }
+    @Test
+    void success() {
+        DebugElapsedTime t = new DebugElapsedTime();
+        CacheMap<Integer, String> map = new CacheMap<>();
+        map.put(1, () -> {
+            TimeUnit.SECONDS.sleep(1);
+            return "OK";
+        });
+        map.pin(1);
+        assertEquals(true, t.next() < 100);
+        assertEquals("OK", map.get(1));
+        assertEquals(true, t.next() >= 1000);
+    }
 
   /*
   @Test void fail() {

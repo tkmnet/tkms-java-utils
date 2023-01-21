@@ -41,7 +41,7 @@ public class AES {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(HashString.toSHA256(key),  "AES"), IV_PARAMETER_SPEC);
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(HashString.toSHA256(key), "AES"), IV_PARAMETER_SPEC);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

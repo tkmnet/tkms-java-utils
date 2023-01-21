@@ -5,367 +5,367 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class FutureArrayList<E> implements List<E> {
-  private ExecutorService executorService;
-  private transient int modCount = 0;
-  private ArrayList<Future<E>> list;
+    private ExecutorService executorService;
+    private transient int modCount = 0;
+    private ArrayList<Future<E>> list;
 
-  public FutureArrayList(ExecutorService executorService) {
-    this.executorService = executorService;
-    list = new ArrayList<>();
-  }
-
-  public FutureArrayList(int parallelism) {
-    this(Executors.newWorkStealingPool(parallelism));
-  }
-
-  public FutureArrayList() {
-    this(ForkJoinPool.commonPool());
-  }
-
-  @Override
-  public int size() {
-    return list.size();
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return list.isEmpty();
-  }
-
-  @Override
-  public boolean contains(Object o) {
-    for (E entity : this) {
-      if (entity.equals(o)) {
-        return true;
-      }
+    public FutureArrayList(ExecutorService executorService) {
+        this.executorService = executorService;
+        list = new ArrayList<>();
     }
-    return false;
-  }
 
-  @Override
-  public Iterator<E> iterator() {
-    return new Itr();
-  }
-
-  @Override
-  public Object[] toArray() {
-    Object[] array = new Object[size()];
-    for (int i = 0; i < size(); i += 1) {
-      array[i] = get(i);
+    public FutureArrayList(int parallelism) {
+        this(Executors.newWorkStealingPool(parallelism));
     }
-    return array;
-  }
 
-  @Override
-  public <T> T[] toArray(T[] ts) {
-    for (int i = 0; i < size(); i += 1) {
-      ts[i] = (T)get(i);
+    public FutureArrayList() {
+        this(ForkJoinPool.commonPool());
     }
-    return ts;
-  }
 
-  @Override
-  public boolean add(E e) {
-    return add(executorService.submit(() -> e));
-  }
-
-  public boolean add(Callable<E> c) {
-    synchronized (list) {
-      return list.add(executorService.submit(c));
+    @Override
+    public int size() {
+        return list.size();
     }
-  }
 
-  public boolean add(Future<E> f) {
-    synchronized (list) {
-      return list.add(f);
+    @Override
+    public boolean isEmpty() {
+        return list.isEmpty();
     }
-  }
 
-  @Override
-  public boolean remove(Object o) {
-    boolean result = false;
-    for (int i = size() -1; i >= 0; i -= 1) {
-      if (get(i).equals(o)) {
-        result = true;
-        list.remove(i);
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public boolean containsAll(Collection<?> collection) {
-    for (Object o : collection) {
-      if (!contains(o)) {
+    @Override
+    public boolean contains(Object o) {
+        for (E entity : this) {
+            if (entity.equals(o)) {
+                return true;
+            }
+        }
         return false;
-      }
-    }
-    return true;
-  }
-
-  @Override
-  public boolean addAll(Collection<? extends E> collection) {
-    boolean result = true;
-    for (E o : collection) {
-      if (!add(o)) {
-        result = false;
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public boolean addAll(int i, Collection<? extends E> collection) {
-    boolean result = false;
-    for (E o : collection) {
-      result = true;
-      add(i, o);
-    }
-    return result;
-  }
-
-  @Override
-  public boolean removeAll(Collection<?> collection) {
-    boolean result = false;
-    for (Object o : collection) {
-      if (remove(o)) {
-        result = true;
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public boolean retainAll(Collection<?> collection) {
-    boolean result = false;
-    for (int i = size() -1; i >= 0; i -= 1) {
-      if (!collection.equals(get(i))) {
-        result = true;
-        list.remove(i);
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public void clear() {
-    for (Future<E> future : list) {
-      future.cancel(false);
-    }
-    list.clear();
-  }
-
-  @Override
-  public E get(int i) {
-    try {
-      return list.get(i).get();
-    } catch (InterruptedException | ExecutionException e) {
-      return null;
-    }
-  }
-
-  @Override
-  public E set(int i, E e) {
-    synchronized (list) {
-      list.set(i, executorService.submit(() -> e));
-      return e;
-    }
-  }
-
-  @Override
-  public void add(int i, E e) {
-    synchronized (list) {
-      list.add(i, executorService.submit(() -> e));
-    }
-  }
-
-  @Override
-  public E remove(int i) {
-    return null;
-  }
-
-  @Override
-  public int indexOf(Object o) {
-    for (int i = 0; i < size(); i += 1) {
-      if (get(i).equals(o)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  @Override
-  public int lastIndexOf(Object o) {
-    for (int i = size() -1; i >= 0; i -= 1) {
-      if (get(i).equals(o)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  @Override
-  public ListIterator<E> listIterator() {
-    return new ListItr(0);
-  }
-
-  @Override
-  public ListIterator<E> listIterator(int i) {
-    return new ListItr(i);
-  }
-
-  @Override
-  public List<E> subList(int fromIndex, int toIndex) {
-    subListRangeCheck(fromIndex, toIndex, list.size());
-    FutureArrayList<E> subList = new FutureArrayList<>();
-    for (int i = fromIndex; i <= toIndex; i += 1) {
-      subList.add(list.get(i));
-    }
-    return subList;
-  }
-
-  private static void subListRangeCheck(int fromIndex, int toIndex, int size) {
-    if (fromIndex < 0) {
-      throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
-    } else if (toIndex > size) {
-      throw new IndexOutOfBoundsException("toIndex = " + toIndex);
-    } else if (fromIndex > toIndex) {
-      throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
-    }
-  }
-
-  private class ListItr extends Itr implements ListIterator<E> {
-    ListItr(int index) {
-      super();
-      this.cursor = index;
     }
 
-    public boolean hasPrevious() {
-      return this.cursor != 0;
+    @Override
+    public Iterator<E> iterator() {
+        return new Itr();
     }
 
-    public int nextIndex() {
-      return this.cursor;
-    }
-
-    public int previousIndex() {
-      return this.cursor - 1;
-    }
-
-    public E previous() {
-      this.checkForComodification();
-      int i = this.cursor - 1;
-      if (i < 0) {
-        throw new NoSuchElementException();
-      } else {
-        if (i >= FutureArrayList.this.size()) {
-          throw new ConcurrentModificationException();
-        } else {
-          this.cursor = i;
-          return FutureArrayList.this.get(this.lastRet = i);
+    @Override
+    public Object[] toArray() {
+        Object[] array = new Object[size()];
+        for (int i = 0; i < size(); i += 1) {
+            array[i] = get(i);
         }
-      }
+        return array;
     }
 
-    public void set(E e) {
-      if (this.lastRet < 0) {
-        throw new IllegalStateException();
-      } else {
-        this.checkForComodification();
+    @Override
+    public <T> T[] toArray(T[] ts) {
+        for (int i = 0; i < size(); i += 1) {
+            ts[i] = (T) get(i);
+        }
+        return ts;
+    }
 
+    @Override
+    public boolean add(E e) {
+        return add(executorService.submit(() -> e));
+    }
+
+    public boolean add(Callable<E> c) {
+        synchronized (list) {
+            return list.add(executorService.submit(c));
+        }
+    }
+
+    public boolean add(Future<E> f) {
+        synchronized (list) {
+            return list.add(f);
+        }
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        boolean result = false;
+        for (int i = size() - 1; i >= 0; i -= 1) {
+            if (get(i).equals(o)) {
+                result = true;
+                list.remove(i);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> collection) {
+        for (Object o : collection) {
+            if (!contains(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> collection) {
+        boolean result = true;
+        for (E o : collection) {
+            if (!add(o)) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean addAll(int i, Collection<? extends E> collection) {
+        boolean result = false;
+        for (E o : collection) {
+            result = true;
+            add(i, o);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> collection) {
+        boolean result = false;
+        for (Object o : collection) {
+            if (remove(o)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> collection) {
+        boolean result = false;
+        for (int i = size() - 1; i >= 0; i -= 1) {
+            if (!collection.equals(get(i))) {
+                result = true;
+                list.remove(i);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void clear() {
+        for (Future<E> future : list) {
+            future.cancel(false);
+        }
+        list.clear();
+    }
+
+    @Override
+    public E get(int i) {
         try {
-          FutureArrayList.this.set(this.lastRet, e);
-        } catch (IndexOutOfBoundsException var3) {
-          throw new ConcurrentModificationException();
+            return list.get(i).get();
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
         }
-      }
     }
 
-    public void add(E e) {
-      this.checkForComodification();
-
-      try {
-        int i = this.cursor;
-        FutureArrayList.this.add(i, e);
-        this.cursor = i + 1;
-        this.lastRet = -1;
-        this.expectedModCount = FutureArrayList.this.modCount;
-      } catch (IndexOutOfBoundsException var3) {
-        throw new ConcurrentModificationException();
-      }
-    }
-  }
-
-  private class Itr implements Iterator<E> {
-    int cursor;
-    int lastRet = -1;
-    int expectedModCount;
-
-    Itr() {
-      this.expectedModCount = FutureArrayList.this.modCount;
-    }
-
-    public boolean hasNext() {
-      return this.cursor != FutureArrayList.this.size();
-    }
-
-    public E next() {
-      this.checkForComodification();
-      int i = this.cursor;
-      if (i >= FutureArrayList.this.size()) {
-        throw new NoSuchElementException();
-      } else {
-        if (i >= FutureArrayList.this.size()) {
-          throw new ConcurrentModificationException();
-        } else {
-          this.cursor = i + 1;
-          return FutureArrayList.this.get(this.lastRet = i);
+    @Override
+    public E set(int i, E e) {
+        synchronized (list) {
+            list.set(i, executorService.submit(() -> e));
+            return e;
         }
-      }
     }
 
-    public void remove() {
-      if (this.lastRet < 0) {
-        throw new IllegalStateException();
-      } else {
-        this.checkForComodification();
-
-        try {
-          FutureArrayList.this.remove(this.lastRet);
-          this.cursor = this.lastRet;
-          this.lastRet = -1;
-          this.expectedModCount = FutureArrayList.this.modCount;
-        } catch (IndexOutOfBoundsException var2) {
-          throw new ConcurrentModificationException();
+    @Override
+    public void add(int i, E e) {
+        synchronized (list) {
+            list.add(i, executorService.submit(() -> e));
         }
-      }
     }
 
-    public void forEachRemaining(Consumer<? super E> action) {
-      Objects.requireNonNull(action);
-      int size = FutureArrayList.this.size();
-      int i = this.cursor;
-      if (i < size) {
-        if (i >= FutureArrayList.this.size()) {
-          throw new ConcurrentModificationException();
+    @Override
+    public E remove(int i) {
+        return null;
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        for (int i = 0; i < size(); i += 1) {
+            if (get(i).equals(o)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        for (int i = size() - 1; i >= 0; i -= 1) {
+            if (get(i).equals(o)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public ListIterator<E> listIterator() {
+        return new ListItr(0);
+    }
+
+    @Override
+    public ListIterator<E> listIterator(int i) {
+        return new ListItr(i);
+    }
+
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        subListRangeCheck(fromIndex, toIndex, list.size());
+        FutureArrayList<E> subList = new FutureArrayList<>();
+        for (int i = fromIndex; i <= toIndex; i += 1) {
+            subList.add(list.get(i));
+        }
+        return subList;
+    }
+
+    private static void subListRangeCheck(int fromIndex, int toIndex, int size) {
+        if (fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        } else if (toIndex > size) {
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        } else if (fromIndex > toIndex) {
+            throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+        }
+    }
+
+    private class ListItr extends Itr implements ListIterator<E> {
+        ListItr(int index) {
+            super();
+            this.cursor = index;
         }
 
-        while(i < size && FutureArrayList.this.modCount == this.expectedModCount) {
-          action.accept(FutureArrayList.this.get(i));
-          ++i;
+        public boolean hasPrevious() {
+            return this.cursor != 0;
         }
 
-        this.cursor = i;
-        this.lastRet = i - 1;
-        this.checkForComodification();
-      }
+        public int nextIndex() {
+            return this.cursor;
+        }
 
+        public int previousIndex() {
+            return this.cursor - 1;
+        }
+
+        public E previous() {
+            this.checkForComodification();
+            int i = this.cursor - 1;
+            if (i < 0) {
+                throw new NoSuchElementException();
+            } else {
+                if (i >= FutureArrayList.this.size()) {
+                    throw new ConcurrentModificationException();
+                } else {
+                    this.cursor = i;
+                    return FutureArrayList.this.get(this.lastRet = i);
+                }
+            }
+        }
+
+        public void set(E e) {
+            if (this.lastRet < 0) {
+                throw new IllegalStateException();
+            } else {
+                this.checkForComodification();
+
+                try {
+                    FutureArrayList.this.set(this.lastRet, e);
+                } catch (IndexOutOfBoundsException var3) {
+                    throw new ConcurrentModificationException();
+                }
+            }
+        }
+
+        public void add(E e) {
+            this.checkForComodification();
+
+            try {
+                int i = this.cursor;
+                FutureArrayList.this.add(i, e);
+                this.cursor = i + 1;
+                this.lastRet = -1;
+                this.expectedModCount = FutureArrayList.this.modCount;
+            } catch (IndexOutOfBoundsException var3) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
 
-    final void checkForComodification() {
-      if (FutureArrayList.this.modCount != this.expectedModCount) {
-        throw new ConcurrentModificationException();
-      }
+    private class Itr implements Iterator<E> {
+        int cursor;
+        int lastRet = -1;
+        int expectedModCount;
+
+        Itr() {
+            this.expectedModCount = FutureArrayList.this.modCount;
+        }
+
+        public boolean hasNext() {
+            return this.cursor != FutureArrayList.this.size();
+        }
+
+        public E next() {
+            this.checkForComodification();
+            int i = this.cursor;
+            if (i >= FutureArrayList.this.size()) {
+                throw new NoSuchElementException();
+            } else {
+                if (i >= FutureArrayList.this.size()) {
+                    throw new ConcurrentModificationException();
+                } else {
+                    this.cursor = i + 1;
+                    return FutureArrayList.this.get(this.lastRet = i);
+                }
+            }
+        }
+
+        public void remove() {
+            if (this.lastRet < 0) {
+                throw new IllegalStateException();
+            } else {
+                this.checkForComodification();
+
+                try {
+                    FutureArrayList.this.remove(this.lastRet);
+                    this.cursor = this.lastRet;
+                    this.lastRet = -1;
+                    this.expectedModCount = FutureArrayList.this.modCount;
+                } catch (IndexOutOfBoundsException var2) {
+                    throw new ConcurrentModificationException();
+                }
+            }
+        }
+
+        public void forEachRemaining(Consumer<? super E> action) {
+            Objects.requireNonNull(action);
+            int size = FutureArrayList.this.size();
+            int i = this.cursor;
+            if (i < size) {
+                if (i >= FutureArrayList.this.size()) {
+                    throw new ConcurrentModificationException();
+                }
+
+                while (i < size && FutureArrayList.this.modCount == this.expectedModCount) {
+                    action.accept(FutureArrayList.this.get(i));
+                    ++i;
+                }
+
+                this.cursor = i;
+                this.lastRet = i - 1;
+                this.checkForComodification();
+            }
+
+        }
+
+        final void checkForComodification() {
+            if (FutureArrayList.this.modCount != this.expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
     }
-  }
 }

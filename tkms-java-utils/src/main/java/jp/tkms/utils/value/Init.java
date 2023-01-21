@@ -1,11 +1,13 @@
 package jp.tkms.utils.value;
 
 import jp.tkms.utils.stream.Editor;
+
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 public class Init<T> {
-    public Init() {};
+    public Init() {
+    }
 
     public T call(Callable<T> callable) {
         try {

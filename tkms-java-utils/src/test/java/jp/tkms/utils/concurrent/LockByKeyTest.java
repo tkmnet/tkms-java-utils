@@ -16,15 +16,16 @@ public class LockByKeyTest {
   }``
    */
 
-  @Test void success() {
-    final Integer[] count = {0};
-    IntStream.range(0, 100000).parallel().forEach((n) -> {
-      try (LockByKey lock = LockByKey.acquire("")) {
-        count[0] += 1;
-      }
-    });
-    assertEquals(count[0], 100000);
-  }
+    @Test
+    void success() {
+        final Integer[] count = {0};
+        IntStream.range(0, 100000).parallel().forEach((n) -> {
+            try (LockByKey lock = LockByKey.acquire("")) {
+                count[0] += 1;
+            }
+        });
+        assertEquals(count[0], 100000);
+    }
 
   /*
   @Test void fail() {
