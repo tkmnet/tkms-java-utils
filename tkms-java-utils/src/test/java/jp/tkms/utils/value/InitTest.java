@@ -31,7 +31,7 @@ public class InitTest {
         );
 
         assertEquals((5), new Init<Integer>().call(
-                new Integer(5),
+                Integer.valueOf(5),
                 (o) -> {
                     o += 3;
                 })

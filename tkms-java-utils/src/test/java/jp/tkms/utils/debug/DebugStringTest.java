@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DebugStringTest {
     @Test
     void success() {
-        ArrayList list = new ArrayList();
-        ArrayList list1 = new ArrayList();
-        ArrayList list2 = new ArrayList();
+        ArrayList<ArrayList<Integer>> list = new ArrayList<>();
+        ArrayList<Integer> list1 = new ArrayList<>();
+        ArrayList<Integer> list2 = new ArrayList<>();
         for (int n : IntRange.rangeClosed(10, 15)) {
             list1.add(n);
             list2.add(n);
