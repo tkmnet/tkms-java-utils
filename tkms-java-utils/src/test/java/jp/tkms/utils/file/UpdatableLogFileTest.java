@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdatableLogFileTest {
@@ -23,14 +25,17 @@ public class UpdatableLogFileTest {
           file.updateLastLine("zxc");
           assertEquals("zxc", file.getLastLine());
           file.updateLastLine("abc");
+          file.updateLastLine("abc");
+          file.updateLastLine("abc");
+          file.updateLastLine("abc");
+          file.updateLastLine("abc");
           assertEquals("abc", file.getLastLine());
           file.addLine("123!!!");
           file.updateLastLine("abc!!!");
           file.updateLastLine("123");
           file.addLine("qwe");
         }
-        String str = new String(Files.readAllBytes(path), Charset.defaultCharset());
-        assertEquals("abc\n123\nqwe", str);
+        assertArrayEquals("abc\n123\nqwe".getBytes(Charset.defaultCharset()), Files.readAllBytes(path));
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
@@ -43,16 +48,14 @@ public class UpdatableLogFileTest {
           file.addLine("1234");
           file.addLine("qwe");
         }
-        String str = new String(Files.readAllBytes(path), Charset.defaultCharset());
-        assertEquals("abc\n1234\nqwe", str);
+        assertArrayEquals("abc\n1234\nqwe".getBytes(Charset.defaultCharset()), Files.readAllBytes(path));
 
         try (UpdatableLogFile file = new UpdatableLogFile(path)) {
           file.updateLastLine("ab");
           file.addLine("234");
           file.addLine("we");
         }
-        str = new String(Files.readAllBytes(path), Charset.defaultCharset());
-        assertEquals("abc\n1234\nab\n234\nwe", str);
+        assertArrayEquals("abc\n1234\nab\n234\nwe".getBytes(Charset.defaultCharset()), Files.readAllBytes(path));
       } catch (Exception e) {
         throw new RuntimeException(e);
       }

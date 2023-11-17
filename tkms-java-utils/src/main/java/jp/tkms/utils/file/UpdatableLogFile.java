@@ -13,10 +13,21 @@ public class UpdatableLogFile implements  AutoCloseable {
     this.file = new RandomAccessFile(path.toFile(), "rw");
   }
 
-  private long seekToLastLineTop() throws IOException {
-    lastLineLength = 0;
+  private long seekToEnd() throws IOException {
     long pos = file.length();
     file.seek(pos);
+    if (pos <= 0 || file.read() != '\0') return pos;
+    while (pos > 0 && file.read() != '\0') {
+      pos -= 1;
+      file.seek(pos);
+    }
+    pos += 1;
+    return pos;
+  }
+
+  private long seekToLastLineTop() throws IOException {
+    lastLineLength = 0;
+    long pos = seekToEnd();
     while (pos > 0 && file.read() != '\n') {
       lastLineLength += 1;
       pos -= 1;
@@ -37,14 +48,14 @@ public class UpdatableLogFile implements  AutoCloseable {
   }
 
   public void addLine(String text) throws IOException {
-    file.seek(file.length());
+    seekToEnd();
     if (file.length() > 0) file.write('\n');
-    file.write(text.getBytes(Charset.defaultCharset()));
+    file.write(text.trim().getBytes(Charset.defaultCharset()));
   }
 
   public void updateLastLine(String text) throws IOException {
     file.setLength(seekToLastLineTop());
-    file.write(text.getBytes(Charset.defaultCharset()));
+    file.write(text.trim().getBytes(Charset.defaultCharset()));
   }
 
   @Override
